@@ -69,6 +69,9 @@ public class EditorCommunicator extends Thread {
 			int key = Integer.parseInt(command[1]);
 			editor.getSketch().deleteShape(key);
 		}
+		else if(msg.equals("")){
+
+		}
 		else{
 			String type = command[1];
 			int x1 = Integer.parseInt(command[2]);

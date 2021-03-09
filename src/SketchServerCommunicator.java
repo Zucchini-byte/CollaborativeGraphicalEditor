@@ -39,10 +39,7 @@ public class SketchServerCommunicator extends Thread {
 
 			// Tell the client the current state of the world
 			// TODO: YOUR CODE HERE
-			System.out.println(server.getSketch().toString());
-			if(!server.getSketch().equals("")){
-				server.broadcast(server.getSketch().toString());
-			}
+			server.broadcast(server.getSketch().toString());
 
 			// Keep getting and handling messages from the client
 			// TODO: YOUR CODE HERE
