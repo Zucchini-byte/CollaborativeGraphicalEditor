@@ -32,6 +32,7 @@ public class Editor extends JFrame {
 	// Drawing state
 	// these are remnants of my implementation; take them as possible suggestions or ignore them
 	private Shape curr = null;					// current shape (if any) being drawn
+	private Shape drawing = null;
 	private Sketch sketch;						// holds and handles all the completed objects
 	private int movingId = -1;					// current shape id (if any; else -1) being moved
 	private Point drawFrom = null;				// where the drawing started
@@ -169,7 +170,14 @@ public class Editor extends JFrame {
 	 */
 	public void drawSketch(Graphics g) {
 		// TODO: YOUR CODE HERE
-		for(Shape shape: sketch.)
+		for(Integer key: sketch.getSketchMap().keySet()){
+			sketch.getSketchMap().get(key).draw(g);
+		}
+		if(drawing != null && mode.equals(mode.DRAW)) {
+			drawing.draw(g);
+		}
+
+		repaint();
 	}
 
 	// Helpers for event handlers
@@ -183,6 +191,43 @@ public class Editor extends JFrame {
 	 */
 	private void handlePress(Point p) {
 		// TODO: YOUR CODE HERE
+
+		curr = sketch.getShapeAt(p);
+
+		if(mode.equals(mode.DRAW)) {
+
+			if (shapeType.equals("ellipse")) {
+				curr = new Ellipse(p.x, p.y, color);
+			}
+			else if(shapeType.equals("rectangle")){
+				curr = new Rectangle(p.x, p.y, color);
+			}
+			else if(shapeType.equals("segment")){
+				curr = new Segment(p.x, p.y, color);
+			}
+			drawing = curr;
+			drawFrom = p;
+
+		}
+		else if(curr != null && curr.contains(p.x,p.y)) {
+			int ID = sketch.getID(curr);
+		 if (mode.equals(mode.MOVE)) {
+				moveFrom = p;
+			} else if (mode.equals(mode.RECOLOR)) {
+				sketch.changeColor(ID,color);
+
+				// tells the communicator
+				comm.updateSketch(ID, curr);
+			} else if (mode.equals(mode.DELETE)) {
+				sketch.deleteShape(ID);
+
+				// tells the communicator
+				comm.deleteShape(ID);
+			}
+		}
+
+		repaint();
+
 	}
 
 	/**
@@ -192,6 +237,25 @@ public class Editor extends JFrame {
 	 */
 	private void handleDrag(Point p) {
 		// TODO: YOUR CODE HERE
+		movingId = sketch.getID(curr);
+		if(mode.equals(mode.DRAW)){
+			if(shapeType.equals("ellipse")){
+				((Ellipse)curr).setCorners(drawFrom.x, drawFrom.y, p.x, p.y);
+			}
+			else if(shapeType.equals("rectangle")){
+				((Rectangle)curr).setCorner(drawFrom.x, drawFrom.y, p.x, p.y);
+			}
+			else if(shapeType.equals("segment")){
+				((Segment)curr).setEnd(p.x, p.y);
+			}
+
+		}
+		else if(mode.equals(mode.MOVE) && moveFrom != null && movingId != -1){
+			sketch.get(movingId).moveBy(p.x - moveFrom.x, p.y - moveFrom.y);
+			moveFrom = p;
+
+		}
+		repaint();
 	}
 
 	/**
@@ -201,6 +265,20 @@ public class Editor extends JFrame {
 	 */
 	private void handleRelease() {
 		// TODO: YOUR CODE HERE
+
+
+		if(mode.equals(mode.DRAW)){
+			// tells the communicator
+			comm.addToSketch(curr);
+			drawing = null;
+		}
+		else if(mode.equals(mode.MOVE) && movingId !=-1){
+			// tells the communicator
+
+			comm.updateSketch(movingId, curr);
+		}
+		repaint();
+
 	}
 
 	public static void main(String[] args) {

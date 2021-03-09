@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -38,9 +39,54 @@ public class SketchServerCommunicator extends Thread {
 
 			// Tell the client the current state of the world
 			// TODO: YOUR CODE HERE
+			System.out.println(server.getSketch().toString());
+			if(!server.getSketch().equals("")){
+				server.broadcast(server.getSketch().toString());
+			}
 
 			// Keep getting and handling messages from the client
 			// TODO: YOUR CODE HERE
+			String msg;
+
+			while( (msg = in.readLine()) != null){
+				System.out.println("Got msg: " + msg);
+
+				String[] command = msg.split(" ");
+				if(command[0].equals("delete")){
+					int key = Integer.parseInt(command[1]);
+					server.getSketch().deleteShape(key);
+				}
+				else{
+					String type = command[1];
+					int x1 = Integer.parseInt(command[2]);
+					int y1 = Integer.parseInt(command[3]);
+					int x2 = Integer.parseInt(command[4]);
+					int y2 = Integer.parseInt(command[5]);
+					Color color = new Color(Integer.parseInt(command[6]));
+					Shape shape = null;
+
+					if(type.equals("ellipse")){
+						shape = new Ellipse(x1, y1, x2, y2, color);
+					}
+					else if(type.equals("rectangle")){
+						shape = new Rectangle(x1, y1, x2, y2, color);
+					}
+					else if(type.equals("segment")){
+						shape = new Segment(x1, y1, x2, y2, color);
+					}
+
+					if(command[0].equals("add")){
+						server.getSketch().addShape(shape);
+					}
+					else if(command[0].equals("update")){
+						int key = Integer.parseInt(command[7]);
+						server.getSketch().updateShape(key, shape);
+					}
+				}
+				server.broadcast(msg);
+
+
+			}
 
 			// Clean up -- note that also remove self from server's list so it doesn't broadcast here
 			server.removeCommunicator(this);
