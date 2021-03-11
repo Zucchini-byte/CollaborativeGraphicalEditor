@@ -74,13 +74,12 @@ public class EditorCommunicator extends Thread {
 	// Send editor requests to the server
 	// TODO: YOUR CODE HERE
 
-
 	public void addToSketch(Shape shape){
 		send("add " + shape.toString() );
 	}
 
 	public void updateSketch(int key, Shape shape){
-		send("update " + shape.toString() + key);
+		send("update " + shape.toString() + " " + key);
 	}
 
 	public void deleteShape(int key){

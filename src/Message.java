@@ -39,7 +39,7 @@ public class Message {
             if (command[0].equals("add")) {
                 sketch.addShape(shape);
             } else if (command[0].equals("update")) {
-                int key = sketch.getID(shape);
+                int key = Integer.parseInt(command[7]);
                 sketch.updateShape(key, shape);
             }
         }

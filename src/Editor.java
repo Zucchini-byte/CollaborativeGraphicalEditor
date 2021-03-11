@@ -253,6 +253,7 @@ public class Editor extends JFrame {
 		}
 		else if(mode.equals(mode.MOVE) && moveFrom != null && movingId != -1){
 			sketch.get(movingId).moveBy(p.x - moveFrom.x, p.y - moveFrom.y);
+
 			moveFrom = p;
 
 		}
