@@ -10,32 +10,23 @@ import java.awt.Graphics;
  * @author CBK, updated Fall 2016
  */
 public class Rectangle implements Shape {
+	int x1,x2, y1,y2;
+	Color color;
+
+	public Rectangle(int x1,int y1,int x2, int y2, Color color){
+		this.x1 = Math.min(x1, x2);
+		this.y1 = Math.min(y1, y2);
+		this.x2 = Math.max(x1, x2);
+		this.y2 = Math.max(y1, y2);
+		this.color= color;
+
+	}
 	// TODO: YOUR CODE HERE
-	private int x,y, height, width;
-	private Color color;
-
-	public Rectangle(int x1,int y1, Color color){
-		x = x1;
-		y = y1;
-		this.color =color;
-	}
-
-	public Rectangle(int x1, int y1, int x2, int y2, Color color) {
-		x = Math.min(x1, x2); y = Math.min(y1, y2);
-		width = Math.abs(x1-x2);
-		height = Math.abs(y1-y2);
-	}
-
-	public void setCorner(int x1, int y1, int x2, int y2){
-		x = Math.min(x1, x2); y = Math.min(y1, y2);
-		width = Math.abs(x1-x2);
-		height = Math.abs(y1-y2);
-	}
-
 	@Override
 	public void moveBy(int dx, int dy) {
-		x+=dx;
-		y+=dy;
+		x1 += dx; y1 += dy;
+		x2 += dx; y2 += dy;
+
 	}
 
 	@Override
@@ -45,22 +36,21 @@ public class Rectangle implements Shape {
 
 	@Override
 	public void setColor(Color color) {
-		this.color = color;
+		this.color= color;
 	}
 		
 	@Override
 	public boolean contains(int x, int y) {
-		if(  (x > this.x && x < this.x + width) && (y > this.y && y < this.y +height) ) return true;
-		else return false;
+		return (x1<x && x2>x) && (y1<y && y2>y);
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(color);
-		g.fillRect(x,y,width, height);
+		g.fillRect(x1,y1, x2-x1,y2-y1);
 	}
 
 	public String toString() {
-		return "rectangle " + x + " " + y + " " + width + " " + height + " " + color.getRGB();
- 	}
+		return "rectangle "+x1+" "+y1+" "+x2+" "+y2+" "+color.getRGB();
+	}
 }

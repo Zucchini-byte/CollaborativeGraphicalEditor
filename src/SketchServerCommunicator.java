@@ -1,4 +1,3 @@
-import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 
@@ -6,6 +5,7 @@ import java.net.Socket;
  * Handles communication between the server and one client, for SketchServer
  *
  * @author Chris Bailey-Kellogg, Dartmouth CS 10, Fall 2012; revised Winter 2014 to separate SketchServerCommunicator
+ * Modified by Kashan Mahmood for PSET 6 - March 7,2021
  */
 public class SketchServerCommunicator extends Thread {
 	private Socket sock;					// to talk with client
@@ -38,52 +38,28 @@ public class SketchServerCommunicator extends Thread {
 			out = new PrintWriter(sock.getOutputStream(), true);
 
 			// Tell the client the current state of the world
-			// TODO: YOUR CODE HERE
-			server.broadcast(server.getSketch().toString());
 
-			// Keep getting and handling messages from the client
-			// TODO: YOUR CODE HERE
-			String msg;
-
-			while( (msg = in.readLine()) != null){
-				System.out.println("Got msg: " + msg);
-
-				String[] command = msg.split(" ");
-				if(command[0].equals("delete")){
-					int key = Integer.parseInt(command[1]);
-					server.getSketch().deleteShape(key);
-				}
-				else{
-					String type = command[1];
-					int x1 = Integer.parseInt(command[2]);
-					int y1 = Integer.parseInt(command[3]);
-					int x2 = Integer.parseInt(command[4]);
-					int y2 = Integer.parseInt(command[5]);
-					Color color = new Color(Integer.parseInt(command[6]));
-					Shape shape = null;
-
-					if(type.equals("ellipse")){
-						shape = new Ellipse(x1, y1, x2, y2, color);
-					}
-					else if(type.equals("rectangle")){
-						shape = new Rectangle(x1, y1, x2, y2, color);
-					}
-					else if(type.equals("segment")){
-						shape = new Segment(x1, y1, x2, y2, color);
-					}
-
-					if(command[0].equals("add")){
-						server.getSketch().addShape(shape);
-					}
-					else if(command[0].equals("update")){
-						int key = Integer.parseInt(command[7]);
-						server.getSketch().updateShape(key, shape);
-					}
-				}
-				server.broadcast(msg);
-
+			for(int id: server.getSketch().getShapeSketch().navigableKeySet()){
+				//sends out a message to draw each of the shapes to the editor communicator.
+				//needed especially if a new editor joins that wasn't there from the start.
+				send("draw "+ server.getSketch().getShapeSketch().get(id));
 
 			}
+
+			// Keep getting and handling messages from the client
+
+			String line;
+			while((line=in.readLine())!= null){
+				//for each request received, make it into a new message with the line and server as the parameters
+				Message msg= new Message(line, server);
+				//process this message and do what is asked
+				msg.process();
+
+				//broadcast the request to all editor communicator so they can update
+				//their editor's local sketch
+				server.broadcast(line);
+			}
+
 
 			// Clean up -- note that also remove self from server's list so it doesn't broadcast here
 			server.removeCommunicator(this);

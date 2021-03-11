@@ -1,7 +1,6 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.awt.*;
 import java.awt.event.*;
+import java.sql.SQLOutput;
 
 import javax.swing.*;
 
@@ -12,6 +11,7 @@ import javax.swing.*;
  * @author CBK, winter 2014, overall structure substantially revised
  * @author Travis Peters, Dartmouth CS 10, Winter 2015; remove EditorCommunicatorStandalone (use echo server for testing)
  * @author CBK, spring 2016 and Fall 2016, restructured Shape and some of the GUI
+ * Modified by Kashan Mahmood for PSET 6 - March 7,2021
  */
 
 public class Editor extends JFrame {	
@@ -32,7 +32,6 @@ public class Editor extends JFrame {
 	// Drawing state
 	// these are remnants of my implementation; take them as possible suggestions or ignore them
 	private Shape curr = null;					// current shape (if any) being drawn
-	private Shape drawing = null;
 	private Sketch sketch;						// holds and handles all the completed objects
 	private int movingId = -1;					// current shape id (if any; else -1) being moved
 	private Point drawFrom = null;				// where the drawing started
@@ -169,15 +168,12 @@ public class Editor extends JFrame {
 	 * along with the object currently being drawn in this editor (not yet part of the sketch)
 	 */
 	public void drawSketch(Graphics g) {
-		// TODO: YOUR CODE HERE
-		for(Integer key: sketch.getSketchMap().keySet()){
-			sketch.getSketchMap().get(key).draw(g);
-		}
-		if(drawing != null && mode.equals(mode.DRAW)) {
-			drawing.draw(g);
-		}
 
-		repaint();
+		// if the curr shape isn't null, draw it for this editor
+		if(curr!= null) curr.draw(g);
+
+		//calls the draw method in sketch to draw the shapes in this local sketch
+		sketch.draw(g);
 	}
 
 	// Helpers for event handlers
@@ -190,43 +186,46 @@ public class Editor extends JFrame {
 	 * in deleting mode, (request to) delete clicked shape
 	 */
 	private void handlePress(Point p) {
-		// TODO: YOUR CODE HERE
 
-		curr = sketch.getShapeAt(p);
-
-		if(mode.equals(mode.DRAW)) {
-
-			if (shapeType.equals("ellipse")) {
-				curr = new Ellipse(p.x, p.y, color);
-			}
-			else if(shapeType.equals("rectangle")){
-				curr = new Rectangle(p.x, p.y, color);
-			}
-			else if(shapeType.equals("segment")){
-				curr = new Segment(p.x, p.y, color);
-			}
-			drawing = curr;
-			drawFrom = p;
-
-		}
-		else if(curr != null && curr.contains(p.x,p.y)) {
-			int ID = sketch.getID(curr);
-		 if (mode.equals(mode.MOVE)) {
-				moveFrom = p;
-			} else if (mode.equals(mode.RECOLOR)) {
-				sketch.changeColor(ID,color);
-
-				// tells the communicator
-				comm.updateSketch(ID, curr);
-			} else if (mode.equals(mode.DELETE)) {
-				sketch.deleteShape(ID);
-
-				// tells the communicator
-				comm.deleteShape(ID);
+		//if the mode is draw
+		if (mode== mode.DRAW){
+			//sets the drawFrom to current point if its null so it can be used in handleDrag
+			if(drawFrom==null){
+				drawFrom= p;
 			}
 		}
 
-		repaint();
+		// In moving mode
+		else if(mode== mode.MOVE){
+			//checks the sketch and sees if there is a shape at point p, else it returns a -1
+			if (sketch.topShapeIdAt(p)!= -1){
+
+				//sets the moving id to the shape that's the newest at point p in the local sketch
+				movingId= sketch.topShapeIdAt(p);
+				//sets the moveFrom point to point p
+				moveFrom=p;
+			}
+		}
+
+		// In recoloring mode
+		else if(mode==mode.RECOLOR){
+			//checks the sketch and sees if there is a shape at point p, else it returns a -1
+			if (sketch.topShapeIdAt(p)!= -1){
+
+				//have the comm send a message to the server to recolor the newest shape at point p
+				comm.send("recolor " + sketch.topShapeIdAt(p) + " "+ color.getRGB());
+			}
+		}
+		// In delete mode
+		else if(mode== mode.DELETE){
+			//checks the sketch and sees if there is a shape at point p, else it returns a -1
+			if (sketch.topShapeIdAt(p)!= -1){
+
+				//have the comm send a message to the server to delete the newest shape at point p
+				comm.send("delete " + sketch.topShapeIdAt(p));
+			}
+		}
+
 
 	}
 
@@ -236,25 +235,33 @@ public class Editor extends JFrame {
 	 * in moving mode, (request to) drag the object
 	 */
 	private void handleDrag(Point p) {
-		// TODO: YOUR CODE HERE
-		movingId = sketch.getID(curr);
-		if(mode.equals(mode.DRAW)){
-			if(shapeType.equals("ellipse")){
-				((Ellipse)curr).setCorners(drawFrom.x, drawFrom.y, p.x, p.y);
+		// if mode is draw
+		if(mode==mode.DRAW){
+
+			//depending on the shapeType, sets curr shape to a new shape with the respective parameters
+			if (shapeType.equals("ellipse")) {
+				curr = new Ellipse(drawFrom.x, drawFrom.y, p.x, p.y, color);
+			}else if(shapeType.equals("rectangle")){
+				curr = new Rectangle(drawFrom.x, drawFrom.y, p.x, p.y, color);
+			}else if(shapeType.equals("segment")) {
+				curr = new Segment(drawFrom.x, drawFrom.y, p.x, p.y, color);
 			}
-			else if(shapeType.equals("rectangle")){
-				((Rectangle)curr).setCorner(drawFrom.x, drawFrom.y, p.x, p.y);
-			}
-			else if(shapeType.equals("segment")){
-				((Segment)curr).setEnd(p.x, p.y);
+		}
+
+		//if mode is move
+		else if (mode== mode.MOVE){
+
+			//if moveFrom isn't null
+			if(moveFrom!= null){
+
+				//have the comm send a message to the server to move the shape at movingId in the server
+				comm.send("move "+ movingId + " "+ (p.x - moveFrom.x)+ " "+(p.y - moveFrom.y));
+				moveFrom = p;
 			}
 
 		}
-		else if(mode.equals(mode.MOVE) && moveFrom != null && movingId != -1){
-			sketch.get(movingId).moveBy(p.x - moveFrom.x, p.y - moveFrom.y);
-			moveFrom = p;
 
-		}
+		//repaint
 		repaint();
 	}
 
@@ -264,20 +271,31 @@ public class Editor extends JFrame {
 	 * in moving mode, release it		
 	 */
 	private void handleRelease() {
-		// TODO: YOUR CODE HERE
 
+		//if the mode is draw
+		if(mode==mode.DRAW) {
 
-		if(mode.equals(mode.DRAW)){
-			// tells the communicator
-			comm.addToSketch(curr);
-			drawing = null;
+			//if the curr shape isn't null
+			if (curr!= null) {
+
+				//have the comm send a message to the server to draw the current shape for everyone
+				comm.send("draw " + curr.toString());
+
+				//since we are done with curr shape, we set it to null to be used again
+				curr = null;
+			}
+
+			//drawFrom set to null since we are done using it
+			drawFrom = null;
 		}
-		else if(mode.equals(mode.MOVE) && movingId !=-1){
-			// tells the communicator
 
-			comm.updateSketch(movingId, curr);
+		//if mode is move
+		else if(mode==mode.MOVE){
+
+			//when the mouse releases, moveFrom and movingId are reset
+			moveFrom=null;
+			movingId=-1;
 		}
-		repaint();
 
 	}
 
