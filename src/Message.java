@@ -16,6 +16,7 @@ public class Message {
             sketch.deleteShape(key);
         }
         else if (command[0].equals("add")){
+
             String type = command[1];
             int x1 = Integer.parseInt(command[2]);
             int y1 = Integer.parseInt(command[3]);
@@ -32,8 +33,14 @@ public class Message {
             } else if (type.equals("segment")) {
                 shape = new Segment(x1, y1, x2, y2, color);
             }
-
-            sketch.addShape(shape);
+            if(command.length == 8){
+                int key = Integer.parseInt(command[7]);
+                sketch.getSketchMap().put(key, shape);
+                sketch.setMaxID(key+1);
+            }
+            else {
+                sketch.addShape(shape);
+            }
         }
         else if(command[0].equals("move")){
             int key = Integer.parseInt(command[1]);

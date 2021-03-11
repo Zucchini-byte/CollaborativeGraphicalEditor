@@ -7,7 +7,11 @@ public class Sketch {
 
     public Sketch(){
         sketchMap = new TreeMap<>();
-        maxId = 0;
+        maxId =0;
+    }
+
+    public synchronized void setMaxID(int maxId){
+        this.maxId = maxId;
     }
 
     public synchronized TreeMap<Integer,Shape> getSketchMap(){
@@ -59,12 +63,12 @@ public class Sketch {
     public synchronized void recolorShape(int key, Color color){
         sketchMap.get(key).setColor(color);
     }
-    
+
 
     public synchronized String toString(){
        String sketchString = "";
        for(int key: sketchMap.keySet()){
-           sketchString += "add " + sketchMap.get(key).toString() + "\n";
+           sketchString += "add " +sketchMap.get(key).toString() + " " + key + "\n";
        }
 
 

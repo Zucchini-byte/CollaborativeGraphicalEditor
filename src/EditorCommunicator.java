@@ -79,6 +79,7 @@ public class EditorCommunicator extends Thread {
 	}
 
 	public void moveShape(int key, int dx, int dy){
+		System.out.println(key);
 		send("move " + key + " " +dx + " " + dy );
 	}
 
