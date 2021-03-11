@@ -43,7 +43,7 @@ public class SketchServerCommunicator extends Thread {
 				//sends out a message to draw each of the shapes to the editor communicator.
 				//needed especially if a new editor joins that wasn't there from the start.
 				send("draw "+ server.getSketch().getShapeSketch().get(id));
-
+				send("setID " + id);
 			}
 
 			// Keep getting and handling messages from the client
@@ -52,6 +52,7 @@ public class SketchServerCommunicator extends Thread {
 			while((line=in.readLine())!= null){
 				//for each request received, make it into a new message with the line and server as the parameters
 				Message msg= new Message(line, server);
+				System.out.println(line);
 				//process this message and do what is asked
 				msg.process();
 

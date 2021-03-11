@@ -43,6 +43,10 @@ public class Message {
         } else if (request[0].equals("move")) {
             move(request);
         }
+        else if(request[0].equals("setID")){
+            int Id = Integer.parseInt(request[1]);
+            sketch.setMaxId(Id + 1);
+        }
 
     }
 

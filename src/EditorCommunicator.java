@@ -1,4 +1,3 @@
-import org.opencv.core.Rect;
 
 import java.awt.*;
 import java.io.*;

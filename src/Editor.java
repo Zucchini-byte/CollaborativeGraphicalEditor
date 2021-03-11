@@ -169,11 +169,13 @@ public class Editor extends JFrame {
 	 */
 	public void drawSketch(Graphics g) {
 
-		// if the curr shape isn't null, draw it for this editor
-		if(curr!= null) curr.draw(g);
+
 
 		//calls the draw method in sketch to draw the shapes in this local sketch
 		sketch.draw(g);
+
+		// if the curr shape isn't null, draw it for this editor
+		if(curr!= null) curr.draw(g);
 	}
 
 	// Helpers for event handlers

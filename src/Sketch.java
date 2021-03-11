@@ -47,6 +47,11 @@ public class Sketch {
         return shapeMap;
     }
 
+    // set the maxId of the sketch
+    public void setMaxId(int newId){
+        maxId = newId;
+    }
+
     //returns the id of the newest shape at point p
     public int topShapeIdAt(Point p){
 
