@@ -49,6 +49,7 @@ public class SketchServerCommunicator extends Thread {
 			while( (msg = in.readLine()) != null){
 				Message serverMsg = new Message(msg, server.getSketch());
 				serverMsg.handleMsg();
+				System.out.println(msg);
 				server.broadcast(msg);
 			}
 

@@ -218,7 +218,7 @@ public class Editor extends JFrame {
 				sketch.changeColor(ID,color);
 
 				// tells the communicator
-				comm.updateSketch(ID, curr);
+				comm.recolorShape(ID, color);
 			} else if (mode.equals(mode.DELETE)) {
 				sketch.deleteShape(ID);
 
@@ -252,7 +252,8 @@ public class Editor extends JFrame {
 
 		}
 		else if(mode.equals(mode.MOVE) && moveFrom != null && movingId != -1){
-			sketch.get(movingId).moveBy(p.x - moveFrom.x, p.y - moveFrom.y);
+
+			comm.moveShape(movingId, p.x - moveFrom.x, p.y - moveFrom.y);
 
 			moveFrom = p;
 
@@ -275,9 +276,7 @@ public class Editor extends JFrame {
 			drawing = null;
 		}
 		else if(mode.equals(mode.MOVE) && movingId !=-1){
-			// tells the communicator
-
-			comm.updateSketch(movingId, curr);
+			// tells the
 		}
 		repaint();
 

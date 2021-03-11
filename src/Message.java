@@ -15,10 +15,7 @@ public class Message {
             int key = Integer.parseInt(command[1]);
             sketch.deleteShape(key);
         }
-        else if(msg.equals("")){
-
-        }
-        else {
+        else if (command[0].equals("add")){
             String type = command[1];
             int x1 = Integer.parseInt(command[2]);
             int y1 = Integer.parseInt(command[3]);
@@ -36,12 +33,21 @@ public class Message {
                 shape = new Segment(x1, y1, x2, y2, color);
             }
 
-            if (command[0].equals("add")) {
-                sketch.addShape(shape);
-            } else if (command[0].equals("update")) {
-                int key = Integer.parseInt(command[7]);
-                sketch.updateShape(key, shape);
-            }
+            sketch.addShape(shape);
+        }
+        else if(command[0].equals("move")){
+            int key = Integer.parseInt(command[1]);
+            int dx = Integer.parseInt(command[2]);
+            int dy = Integer.parseInt(command[3]);
+            sketch.moveShape(key, dx, dy);
+        }
+        else if(command[0].equals("recolor")){
+            int key = Integer.parseInt(command[1]);
+            Color color = new Color(Integer.parseInt(command[2]));
+            sketch.recolorShape(key, color);
+        }
+        else{
+            System.out.println("Invalid msg: " + msg);
         }
     }
 }

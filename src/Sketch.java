@@ -52,9 +52,14 @@ public class Sketch {
         return sketchMap.get(key);
     }
 
-    public synchronized void updateShape(int key, Shape shape){
-        sketchMap.put(key, shape);
+    public synchronized void moveShape(int key, int dx, int dy){
+        sketchMap.get(key).moveBy(dx, dy);
     }
+
+    public synchronized void recolorShape(int key, Color color){
+        sketchMap.get(key).setColor(color);
+    }
+    
 
     public synchronized String toString(){
        String sketchString = "";

@@ -63,7 +63,6 @@ public class EditorCommunicator extends Thread {
 	}
 
 	public void handleMsg(String msg){
-		System.out.println(msg);
 
 		Message editorMsg = new Message(msg, editor.getSketch());
 		editorMsg.handleMsg();
@@ -74,12 +73,17 @@ public class EditorCommunicator extends Thread {
 	// Send editor requests to the server
 	// TODO: YOUR CODE HERE
 
+
 	public void addToSketch(Shape shape){
 		send("add " + shape.toString() );
 	}
 
-	public void updateSketch(int key, Shape shape){
-		send("update " + shape.toString() + " " + key);
+	public void moveShape(int key, int dx, int dy){
+		send("move " + key + " " +dx + " " + dy );
+	}
+
+	public void recolorShape(int key, Color color){
+		send("recolor " + key + " " + color.getRGB());
 	}
 
 	public void deleteShape(int key){
