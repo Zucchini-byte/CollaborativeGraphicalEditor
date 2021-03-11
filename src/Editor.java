@@ -173,6 +173,7 @@ public class Editor extends JFrame {
 		for(Integer key: sketch.getSketchMap().keySet()){
 			sketch.getSketchMap().get(key).draw(g);
 		}
+		
 		if(drawing != null && mode.equals(mode.DRAW)) {
 			drawing.draw(g);
 		}
@@ -196,7 +197,7 @@ public class Editor extends JFrame {
 
 		if(mode.equals(mode.DRAW)) {
 
-			if (shapeType.equals("ellipse")) {
+			if(shapeType.equals("ellipse")) {
 				curr = new Ellipse(p.x, p.y, color);
 			}
 			else if(shapeType.equals("rectangle")){

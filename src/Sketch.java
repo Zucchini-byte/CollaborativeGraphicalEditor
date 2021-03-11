@@ -3,15 +3,18 @@ import java.util.TreeMap;
 
 public class Sketch {
     private TreeMap<Integer, Shape> sketchMap;
+    private int maxId;
 
     public Sketch(){
         sketchMap = new TreeMap<>();
+        maxId = 0;
     }
 
     public synchronized TreeMap<Integer,Shape> getSketchMap(){
         return sketchMap;
     }
 
+    // get the ID of a shape
     public synchronized Integer getID(Shape shape){
         for(Integer key: sketchMap.descendingKeySet()){
             if(sketchMap.get(key) == shape){
@@ -22,6 +25,7 @@ public class Sketch {
     }
 
 
+    // using point to get shape at
     public synchronized Shape getShapeAt(Point p){
         for(Integer key: sketchMap.descendingKeySet()){
             if(sketchMap.get(key).contains(p.x, p.y)){
@@ -31,13 +35,9 @@ public class Sketch {
         return null;
     }
 
-    public synchronized void addShape(Shape newShape){
-        Integer uniqueId = sketchMap.size();
-        sketchMap.put(uniqueId,newShape);
-    }
-
-    public synchronized void moveShape(Integer id, int dx, int dy){
-        sketchMap.get(id).moveBy(dx,dy);
+    public synchronized void addShape(Shape newShape){ ;
+        sketchMap.put(maxId,newShape);
+        maxId++;
     }
 
     public synchronized void deleteShape(Integer id){
@@ -59,9 +59,9 @@ public class Sketch {
     public synchronized String toString(){
        String sketchString = "";
        for(int key: sketchMap.keySet()){
-           System.out.println(sketchString);
            sketchString += "add " + sketchMap.get(key).toString() + "\n";
        }
+
 
        return sketchString;
     }

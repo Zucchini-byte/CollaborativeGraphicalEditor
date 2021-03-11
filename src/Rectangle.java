@@ -20,10 +20,12 @@ public class Rectangle implements Shape {
 		this.color =color;
 	}
 
-	public Rectangle(int x1, int y1, int x2, int y2, Color color) {
-		x = Math.min(x1, x2); y = Math.min(y1, y2);
-		width = Math.abs(x1-x2);
-		height = Math.abs(y1-y2);
+	public Rectangle(int x1, int y1, int width, int height, Color color) {
+		x = x1;
+		y = y1;
+		this.width = width;
+		this.height = height;
+		this.color = color;
 	}
 
 	public void setCorner(int x1, int y1, int x2, int y2){
