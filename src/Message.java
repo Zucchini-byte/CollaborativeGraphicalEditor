@@ -56,20 +56,33 @@ public class Message {
         //depending on the type of object we are requested to add,
         //use the respective parts of the msg array to construct the new shape and add it to the sketch
 
-        if (msg[1].equals("ellipse")) {
-            sketch.add(new Ellipse(Integer.parseInt(msg[2]),
-                    Integer.parseInt(msg[3]), Integer.parseInt(msg[4]),
-                    Integer.parseInt(msg[5]), new Color(Integer.parseInt(msg[6]))));
-        } else if (msg[1].equals("rectangle")) {
-            sketch.add(new Rectangle(Integer.parseInt(msg[2]),
-                    Integer.parseInt(msg[3]), Integer.parseInt(msg[4]),
-                    Integer.parseInt(msg[5]), new Color(Integer.parseInt(msg[6]))));
-        } else if (msg[1].equals("segment")) {
-            sketch.add(new Segment(Integer.parseInt(msg[2]),
-                    Integer.parseInt(msg[3]), Integer.parseInt(msg[4]),
-                    Integer.parseInt(msg[5]), new Color(Integer.parseInt(msg[6]))));
+        Shape shape = null;
+        String type = msg[1];
+        int x1 = Integer.parseInt(msg[2]);
+        int y1 = Integer.parseInt(msg[3]);
+        int x2 = Integer.parseInt(msg[4]);
+        int y2 = Integer.parseInt(msg[5]);
+        Color color = new Color(Integer.parseInt(msg[6]));
+
+        if (type.equals("ellipse")) {
+            shape = new Ellipse(x1, y1, x2, y2, color);
+        } else if (type.equals("rectangle")) {
+            shape = new Rectangle(x1, y1, x2, y2, color);
+        } else if (type.equals("segment")) {
+            shape = new Segment(x1, y1, x2, y2, color);
+        }
+        // if the msg contain an ID add a shape with the Id
+        if(msg.length == 8){
+            int key = Integer.parseInt(msg[7]);
+            sketch.getShapeSketch().put(key, shape);
+            sketch.setMaxId(key+1);
+        }
+        else {
+            sketch.add(shape);
         }
     }
+
+
 
     //helped method for removing a shape from the sketch
     public synchronized void remove(String[] msg) {

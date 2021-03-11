@@ -27,6 +27,11 @@ public class Sketch {
         maxId++;
     }
 
+    // adds a shape with an Id already associated
+    public void add(int ID, Shape item){
+        shapeMap.put(ID, item);
+    }
+
     //removes shape at <key> id from the sketch
     public void remove(int id){
         shapeMap.remove(id);
