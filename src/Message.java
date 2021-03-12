@@ -59,7 +59,6 @@ public class Message {
     }
 
     private void addFreeHand(String[] request) {
-//        List<Segment> segments = new ArrayList<>();
 
         FreeHand shape = new FreeHand();
         int limit = request.length;
@@ -105,8 +104,10 @@ public class Message {
             shape = new Segment(x1, y1, x2, y2, color);
         }
 
+
         // if the msg contain an ID add a shape with the Id
         if(msg.length == 8){
+
             int key = Integer.parseInt(msg[7]);
             sketch.getShapeSketch().put(key, shape);
             sketch.setMaxId(key+1);
