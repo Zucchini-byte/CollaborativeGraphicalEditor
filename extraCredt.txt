@@ -1,0 +1,2 @@
+We added a free-hand shape using a list of segments. Implemented all the shape methods in the FreeHand class.
+The methods calls the list of segments and iterate over them. 
