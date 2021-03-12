@@ -12,7 +12,7 @@ public class FreeHand implements Shape{
         segments = new ArrayList<>();
     }
 
-    //cuntstructo but takes parameters of the x, y and color of the first segment
+    //constructor but takes parameters of the x, y and color of the first segment
     public FreeHand(int x, int y, Color color){
         segments = new ArrayList<>();
         this.color = color;
