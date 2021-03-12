@@ -7,7 +7,7 @@ public class FreeHand implements Shape{
     private List<Segment> segments;
     private Color color;
 
-    //constructor with no params.
+    //constructor with no params
     public FreeHand(){
         segments = new ArrayList<>();
     }
