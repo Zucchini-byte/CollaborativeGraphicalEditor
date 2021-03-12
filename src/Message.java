@@ -63,14 +63,15 @@ public class Message {
 
         FreeHand shape = new FreeHand();
         int limit = request.length;
-        System.out.println(request.length);
+
         if(request.length %2 != 0){
+            // if the msg contains the ID/key of the shape, set the limit to length -2
             limit = request.length -2;
         }
         for(int i = 2; i < limit; i+=6){
-//            System.out.println(request[i+1] + " " +request[i+2] + " " +  request[i+5]);
             shape.freedraw(Integer.parseInt(request[i+1]), Integer.parseInt(request[i+2]), new Color(Integer.parseInt(request[i+5])));
         }
+        // if msg contain key, setMaxID up and add the shape with the ID
         if(request.length %2 != 0){
             int ID = Integer.parseInt(request[request.length-1]);
             sketch.add(ID, shape);
@@ -94,7 +95,7 @@ public class Message {
         int y1 = Integer.parseInt(msg[3]);
         int x2 = Integer.parseInt(msg[4]);
         int y2 = Integer.parseInt(msg[5]);
-        Color color = new Color(Integer.parseInt(msg[6]));
+        Color color =  new Color(Integer.parseInt(msg[6]));
 
         if (type.equals("ellipse")) {
             shape = new Ellipse(x1, y1, x2, y2, color);
