@@ -22,43 +22,43 @@ public class Sketch {
     }
 
     //adds the Shape item to the sketch with Id being maxId, which is then incremented by one
-    public void add(Shape item){
+    public synchronized void add(Shape item){
         shapeMap.put(maxId, item);
         maxId++;
     }
 
     // adds a shape with an Id already associated
-    public void add(int ID, Shape item){
+    public synchronized void add(int ID, Shape item){
         shapeMap.put(ID, item);
     }
 
     //removes shape at <key> id from the sketch
-    public void remove(int id){
+    public synchronized void remove(int id){
         shapeMap.remove(id);
     }
 
     //moves shape at <key> id from the sketch by calling the shape's moveBy method with the correct parameters
-    public void move(int id, int dx, int dy){
+    public synchronized void move(int id, int dx, int dy){
         shapeMap.get(id).moveBy(dx,dy);
     }
 
     //recolors shape at <key> id from the sketch by calling the shape's setColor method and using the rgb provided to make the new color
-    public void recolor(int id, int rgb){
+    public synchronized void recolor(int id, int rgb){
         shapeMap.get(id).setColor(new Color(rgb));
     }
 
     //returns shapeMap that contains all the id and the shape in this sketch
-    public TreeMap<Integer,Shape > getShapeSketch(){
+    public synchronized TreeMap<Integer,Shape > getShapeSketch(){
         return shapeMap;
     }
 
     // set the maxId of the sketch
-    public void setMaxId(int newId){
+    public synchronized void setMaxId(int newId){
         maxId = newId;
     }
 
     //returns the id of the newest shape at point p
-    public int topShapeIdAt(Point p){
+    public synchronized int topShapeIdAt(Point p){
 
             //goes through each shape in the sketch, in descending order- so the  newest first
             for(int id: getShapeSketch().descendingKeySet()){
@@ -73,7 +73,7 @@ public class Sketch {
     }
 
     //draws the sketch
-    public void draw(Graphics g){
+    public synchronized void draw(Graphics g){
 
         //goes through each shape in the sketch and calls its respective draw method.
         for (int id: shapeMap.navigableKeySet()){
@@ -82,7 +82,7 @@ public class Sketch {
     }
 
     //toString() method that just tells us how many shapes are in this sketch
-    public String toString(){
+    public synchronized String toString(){
         return "This sketch has " + getShapeSketch().size() + " shapes";
     }
 }

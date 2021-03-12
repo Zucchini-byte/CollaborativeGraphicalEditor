@@ -104,7 +104,7 @@ public class Editor extends JFrame {
 	 */
 	private JComponent setupGUI() {
 		// Select type of shape
-		String[] shapes = {"ellipse", "rectangle", "segment"};
+		String[] shapes = {"ellipse", "rectangle", "segment", "free-hand"};
 		JComboBox<String> shapeB = new JComboBox<String>(shapes);
 		shapeB.addActionListener(e -> shapeType = (String)((JComboBox<String>)e.getSource()).getSelectedItem());
 
@@ -194,6 +194,9 @@ public class Editor extends JFrame {
 			//sets the drawFrom to current point if its null so it can be used in handleDrag
 			if(drawFrom==null){
 				drawFrom= p;
+				if(shapeType.equals("free-hand")){
+					curr = new FreeHand(p.x, p.y, color);
+				}
 			}
 		}
 
@@ -247,6 +250,9 @@ public class Editor extends JFrame {
 				curr = new Rectangle(drawFrom.x, drawFrom.y, p.x, p.y, color);
 			}else if(shapeType.equals("segment")) {
 				curr = new Segment(drawFrom.x, drawFrom.y, p.x, p.y, color);
+			}
+			else if(shapeType.equals("free-hand")){
+				((FreeHand)curr).freedraw(p.x,p.y, color);
 			}
 		}
 

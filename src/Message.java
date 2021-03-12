@@ -1,4 +1,7 @@
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Kashan Mahmood.
  * Created March 21, 2021 for PSET6
@@ -35,7 +38,12 @@ public class Message {
         //depending on the first word of the message, call the respctive helped methods to help process the request
 
         if (request[0].equals("draw")) {
-            add(request);
+            if(request[1].equals("free-hand")) {
+                addFreeHand(request);
+            }
+            else{
+                add(request);
+            }
         } else if (request[0].equals("delete")) {
             remove(request);
         } else if (request[0].equals("recolor")) {
@@ -47,6 +55,30 @@ public class Message {
             int Id = Integer.parseInt(request[1]);
             sketch.setMaxId(Id + 1);
         }
+
+    }
+
+    private void addFreeHand(String[] request) {
+//        List<Segment> segments = new ArrayList<>();
+
+        FreeHand shape = new FreeHand();
+        int limit = request.length;
+        System.out.println(request.length);
+        if(request.length %2 != 0){
+            limit = request.length -2;
+        }
+        for(int i = 2; i < limit; i+=6){
+//            System.out.println(request[i+1] + " " +request[i+2] + " " +  request[i+5]);
+            shape.freedraw(Integer.parseInt(request[i+1]), Integer.parseInt(request[i+2]), new Color(Integer.parseInt(request[i+5])));
+        }
+        if(request.length %2 != 0){
+            int ID = Integer.parseInt(request[request.length-1]);
+            sketch.add(ID, shape);
+            sketch.setMaxId(ID+1);
+        }else{
+            sketch.add(shape);
+        }
+
 
     }
 
@@ -71,6 +103,7 @@ public class Message {
         } else if (type.equals("segment")) {
             shape = new Segment(x1, y1, x2, y2, color);
         }
+
         // if the msg contain an ID add a shape with the Id
         if(msg.length == 8){
             int key = Integer.parseInt(msg[7]);
